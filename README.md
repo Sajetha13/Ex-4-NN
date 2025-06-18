@@ -151,8 +151,8 @@ print(classification_report(y_test, preds))
 ```
 
 <H3>Output:</H3>
+![image](https://github.com/user-attachments/assets/5876f544-055b-445f-89fb-3874449dad2b)
 
-![image](https://github.com/user-attachments/assets/95200fad-d91e-4c11-8bc4-311cc72efd13)
 
 
 <H3>Result:</H3>
