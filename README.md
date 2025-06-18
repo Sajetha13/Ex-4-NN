@@ -115,44 +115,39 @@ Normalize our dataset.
 
 <H3>Program:</H3> 
 
-```
+```py
 import pandas as pd
-import sklearn
-from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report
 
+# Load dataset
 url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
-irisdata = pd.read_csv(url, names=names)
-# Takes first 4 columns and assign them to variable "X"
-X = irisdata.iloc[:, 0:4]
-# Takes first 5th columns and assign them to variable "Y". Object dtype refers to strings.
-y = irisdata.select_dtypes(include=[object])
-X.head()
-y.head()
-# y actually contains all categories or classes:
-y.Class.unique()
-# Now transforming categorial into numerical values
-le = preprocessing.LabelEncoder()
-y = y.apply(le.fit_transform)
-y.head()
-# Now for train and test split (80% of  dataset into  training set and  other 20% into test data)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
-# Feature scaling
+cols = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
+data = pd.read_csv(url, names=cols)
+
+# Split features & labels
+X = data.iloc[:, :-1]
+y = LabelEncoder().fit_transform(data['Class'])
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Scale features
 scaler = StandardScaler()
-scaler.fit(X_train)
-X_train = scaler.transform(X_train)
+X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
-mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), max_iter=1000)
-mlp.fit(X_train, y_train.values.ravel())
-predictions = mlp.predict(X_test)
-print(predictions)
-# Last thing: evaluation of algorithm performance in classifying flowers
-print(confusion_matrix(y_test,predictions))
-print(classification_report(y_test,predictions))
+
+# Train MLP
+mlp = MLPClassifier(hidden_layer_sizes=(10,10,10), max_iter=1000)
+mlp.fit(X_train, y_train)
+
+# Predict & evaluate
+preds = mlp.predict(X_test)
+print(confusion_matrix(y_test, preds))
+print(classification_report(y_test, preds))
+
 ```
 
 <H3>Output:</H3>
